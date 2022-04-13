@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- dtd 是xml文件语法的约束文件-->
+
+
+<!--Session工厂配置文件-->
+<configuration>
+    <properties resource="jdbc.properties"/>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <!-- 为某个java类型起别名
+               type ： 指定要起别名的类型全类名，默认别名就是类名小写 user
+               alias:  自定义别名
+        -->
+<!--        <typeAlias type="com.lzw.pojo.User" alias="user"/>-->
+<!--        批量别名  默认为类名小写-->
+        <package name="com.lzw.pojo"/>
+    </typeAliases>
+
+    <environments default="development">
+<!--        <environments default="oracle_development">-->
+            <!-- 切换到oracle开发环境 -->
+            <environment id="development">
+                <transactionManager type="JDBC"/>
+                <dataSource type="POOLED">
+                    <!-- 数据库连接信息 -->
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+
+        <!--oracle开发环境-->
+        <environment id="oracle_development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+<!--
+    <databaseIdProvider type="DB_VENDOR">
+        <property name="MySQL" value="mysql"/>
+        <property name="Oracle" value="oracle"/>
+    </databaseIdProvider>
+-->
+
+    <!--    每个Mapper.xml都需要在Mybatis核心配置文件中注册-->
+    <mappers>
+        <mapper resource="com/lzw/dao/UserMapper.xml"/>
+        <mapper class="com.lzw.dao.UserMapperAnnotation"/>
+        <!--<mapper url=""/>-->
+        <!--<package name="com.lzw.dao"/>-->
+        
+
+    </mappers>
+</configuration>

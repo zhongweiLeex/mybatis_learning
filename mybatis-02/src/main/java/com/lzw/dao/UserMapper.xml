@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+
+SQL映射文件 ， 一定要注册到 全局配置文件mybatis-config.xml文件中
+
+namespace ： 名称空间        指定接口的全类名
+id: 唯一标识                 id 与 方法名称绑定
+resultType: 返回值类型
+#{id}：从传递过来的参数中取出id值
+
+
+-->
+<mapper namespace="com.lzw.dao.UserMapper">
+    <!--    查询语句-->
+    <!--        id对应原来JDBC中的方法名-
+                如果出现 列名 与 javabean中的属性名称不一致的情况， 需要给 列名取别名别名就是 javabean中的属性名
+
+    -->
+    <select id="getUserList" resultType="user">
+        select * from jdbc_learn.user
+    </select>
+
+    <select id="getUser" resultType="user">
+        select * from jdbc_learn.user where id = #{id}
+    </select>
+
+</mapper>
