@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Mybatis 工具类
+ * Mybatis 工具类 <br>
+ * 1. 根据xml配置文件(全局配置文件)创建一个SqlSessionFactory对象 <br>
+ * 2. 通过SqlSessionFactory创建SqlSession实例
  * @ClassName MybatisUtils
  * @Description 工具类
  * @Author Administrator
@@ -33,6 +35,11 @@ public class MybatisUtils {
         }
     }
     /* *
+     * 2. 获取 sqlSession实例， 能直接执行已经映射的sql语句
+     * 已经映射的sql语句：selectOne("",arg1 ）
+     * 参数1： sql语句唯一标识
+     * 参数2： 执行sql语句的参数
+     *
      * @Author zhongweiLee
      * @Description 通过SqlSessionFactory 创建SqlSession对象
      * @Date 20:11 2022/4/12
@@ -43,4 +50,5 @@ public class MybatisUtils {
     public static SqlSession getSqlSession() throws Exception{
         return sqlSessionFactory.openSession();
     }
+
 }
