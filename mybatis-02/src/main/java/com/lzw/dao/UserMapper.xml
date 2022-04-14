@@ -27,4 +27,5 @@ resultType: 返回值类型
         select * from jdbc_learn.user where id = #{id}
     </select>
 
+
 </mapper>

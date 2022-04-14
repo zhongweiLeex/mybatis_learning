@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lzw.dao.UserMapperPlus">
+
+    <!--
+        自定义结果集javaBean映射规则
+        type: 自定义java类型
+        id: 唯一id，方便引用
+    -->
+    <resultMap id="MyUser" type="com.lzw.pojo.User">
+        <!--
+            指定主键列的封装规则
+            id:         定义主键列，底层会有优化
+            result:     定义普通列
+            column：    指定哪一列
+            property:   指定对应的javaBean属性
+        -->
+        <!--result定义主键列-->
+        <id column="id" property="id"/>
+        <!--result定义普通列-->
+        <!--其他不指定的列会自动封装使用自动封装规则，推荐只要写了resultMap 就要将全列映射都写上-->
+        <result column="name" property="name"/>
+        <result column="password" property="password"/>
+        <result column="address" property="address"/>
+        <result column="phone" property="phone"/>
+    </resultMap>
+
+    <!--使用自定义结果集javaBean映射规则 MyUser -->
+    <select id="getUserById" resultMap="MyUser">
+        select * from jdbc_learn.user where id=#{id}
+    </select>
+
+<!-- ===============================================================================   -->
+
+
+    <!--id|name|password|address|phone|d_id|did|dept_name|-->
+    <!--方式1 ： 使用联合查询：使用级联属性封装结果集   -->
+    <resultMap id="MyDifUser1" type="com.lzw.pojo.User">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="password" property="password"/>
+        <result column="address" property="address"/>
+        <result column="phone" property="phone"/>
+        <result column="did" property="dept.id"/>
+        <result column="dept_name" property="dept.name"/>
+    </resultMap>
+
+<!-- ===============================================================================   -->
+    <!--方式2： 使用 association 关联单个其他类对象 -->
+    <resultMap id="MyDifUser2" type="com.lzw.pojo.User">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="password" property="password"/>
+        <result column="address" property="address"/>
+        <result column="phone" property="phone"/>
+
+        <!--association 可以指定联合的javaBean对象-->
+        <!--
+            property ： 指定当前type类中的其他联合的bean对象
+            javaType:  指定联合的bean对象类型[不能省略]
+        -->
+        <association property="dept" javaType="com.lzw.pojo.Dept">
+            <id column="did" property="id"/>
+            <result column="dept_name" property="name"/>
+        </association>
+    </resultMap>
+<!-- ===============================================================================   -->
+
+    <!--场景1：查询user同时查出对应的dept -->
+
+    <!--一个user有与之对应的dept信息-->
+    <!--<select id="getUserAndDept" resultMap="MyDifUser1">-->
+    <select id="getUserAndDept" resultMap="MyDifUser2">
+        select u.id,
+               u.name,
+               u.password,
+               u.address,
+               u.phone,
+               u.d_id d_id,
+               d.id did,
+               d.dept_name dept_name
+        from jdbc_learn.user u,
+             jdbc_learn.dept d
+        where u.d_id = d.id
+          and u.id =#{id}
+    </select>
+
+
+
+</mapper>

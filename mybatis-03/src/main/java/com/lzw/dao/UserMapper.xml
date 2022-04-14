@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+
+SQL映射文件 ， 一定要注册到 全局配置文件mybatis-config.xml文件中
+
+namespace ： 名称空间        指定接口的全类名
+id: 唯一标识                 id 与 方法名称绑定
+resultType: 返回值类型
+#{id}：从传递过来的参数中取出id值
+
+
+-->
+<mapper namespace="com.lzw.dao.UserMapper">
+    
+    <select id="getUserByIdReturnMap" resultType="map">
+        select * from jdbc_learn.user where id=#{id}
+    </select>
+    <select id="getUserByIdReturnUser" resultType="com.lzw.pojo.User">
+        select * from jdbc_learn.user where name like #{name}
+    </select>
+    <!--返回集合 返回值类型要写集合中元素类型-->
+    <select id="getUserList" resultType="com.lzw.pojo.User">
+        select * from jdbc_learn.user
+    </select>
+
+    <select id="getUser" resultType="com.lzw.pojo.User">
+        select * from jdbc_learn.user where id = #{id}
+    </select>
+
+    <!--parameterType 可以省略-->
+    <!--使用pojo传入参数-->
+    <!--useGeneratedKeys: mybatis 获取自增主键 利用statement.getGeneratedKeys（）-->
+    <!--keyProperty: 将获取的指定值封装到javabean的哪个属性-->
+    <insert id="addUser" parameterType="com.lzw.pojo.User" useGeneratedKeys="true" keyProperty="id"> /*使用自动生成的主键策略*/
+            insert into jdbc_learn.user(name, password, address, phone)
+            VALUES(#{name},#{password},#{address},#{phone})
+    </insert>
+    
+    <update id="update">
+        update jdbc_learn.user set name=#{name},password=#{password},address=#{address},phone=#{phone}
+        where id=#{id};
+    </update>
+    <delete id="delete">
+        delete  from jdbc_learn.user where id=#{id}
+    </delete>
+    
+<!--    <select id="getUserByIdAndName" resultType="com.lzw.pojo.User">
+        select * from jdbc_learn.user where id = #{param1} and name=#{param2}
+    </select>-->
+    <select id="getUserByIdAndName" resultType="com.lzw.pojo.User">
+        select * from jdbc_learn.user where id = #{id} and name=#{name}
+    </select>
+    <!--使用map传入值-->
+    <select id="getUserByMap" resultType="com.lzw.pojo.User" >
+        select * from jdbc_learn.user where id=#{id} and name=#{name}
+        /* select * from jdbc_learn.user where id=${id} and name=#{name}*/
+    </select>
+
+    <!--使用 ${} 方式 拼串形式 -->
+<!--    <select id="getUserByMap" resultType="com.lzw.pojo.User">
+        select * from ${tableName} where id=#{id} and name=#{name}
+    </select>-->
+
+
+
+
+
+
+</mapper>

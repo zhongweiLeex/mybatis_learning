@@ -35,8 +35,11 @@ public class MybatisUtils {
         }
     }
     /* *
+     * 2. 获取 sqlSession实例， 能直接执行已经映射的sql语句
+     * 已经映射的sql语句：selectOne("",arg1 ）
+     * 参数1： sql语句唯一标识
+     * 参数2： 执行sql语句的参数
      *
-     * 2. 获取 sqlSession实例 (不自动提交数据)
      * @Author zhongweiLee
      * @Description 通过SqlSessionFactory 创建SqlSession对象
      * @Date 20:11 2022/4/12
@@ -49,16 +52,17 @@ public class MybatisUtils {
     }
 
     /* *
-     * 获取sqlSession实例 自主设置是否自动提交数据
+     * 可以认为设置是否可以自动提交
      * @Author zhongweiLee
      * @Description
-     * @Date 15:45 2022/4/14
+     * @Date 15:57 2022/4/14
      * @ParamsType [boolean]
-     * @ParamsName [AutoCommit]
+     * @ParamsName [autoCommit]
      * @return org.apache.ibatis.session.SqlSession
      **/
-    public static SqlSession getSqlSession(boolean AutoCommit) throws Exception{
-        return sqlSessionFactory.openSession(AutoCommit);
+    public static SqlSession getSqlSession(boolean autoCommit) throws Exception{
+        return sqlSessionFactory.openSession(autoCommit);
     }
+
 
 }
