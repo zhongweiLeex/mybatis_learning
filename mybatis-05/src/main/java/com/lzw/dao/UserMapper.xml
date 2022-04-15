@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace= "com.lzw.dao.UserMapper">
+    <!--定义book表的映射-->
+    <resultMap id="BOOK_RESULT_MAP" type="com.lzw.pojo.BookBean">
+        <result column="book_name" jdbcType="VARCHAR" property="bookName" />
+        <result column="price" jdbcType="FLOAT" property="price" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+    </resultMap>
+
+    <!-- 定义 contact 表的映射 -->
+    <resultMap id="CONTACT_RESULT_MAP" type="com.lzw.pojo.ContactBean">
+        <result column="contact_usage" jdbcType="VARCHAR" property="usage" />
+        <result column="contact_number" jdbcType="VARCHAR" property="number" />
+    </resultMap>
+    
+    <!-- 定义SQL语句映射 -->
+    <resultMap id="RESULT_MAP" type="com.lzw.pojo.UserBean">
+        <constructor>
+            <idArg column="user_id" javaType="int"/>
+            <arg column="name" javaType="String"/>
+        </constructor>
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+
+        <collection property="subList" ofType="com.lzw.pojo.SubBean">
+
+            <id column="sub_id" jdbcType="INTEGER" property="subId" />
+
+            <!-- 根据 type 列来选择不同的 resultMap -->
+            <discriminator column="type" javaType="INTEGER">
+                <case value="1" resultMap="BOOK_RESULT_MAP" />
+                <case value="2" resultMap="CONTACT_RESULT_MAP" />
+            </discriminator>
+
+        </collection>
+
+    </resultMap>
+
+    <select id="findAll" resultMap="RESULT_MAP">
+        select u.user_id, u.name, u.sex, u.age,
+
+               ifnull(bk.book_id, ct.id) as sub_id,
+               ifnull(bk.type, ct.type) as type,
+
+               bk.book_name, bk.price, bk.content,
+               ct.usage as contact_usage, ct.number as contact_number
+        from mybatis_test.user u
+        left join
+        (
+                select 1 as type, ub.user_id, b.* from mybatis_test.user_book ub
+                join mybatis_test.book b on b.book_id=ub.book_id
+
+        ) bk
+            on bk.user_id=u.user_id
+
+        left join
+        (
+            select 2 as type, t.* from mybatis_test.user_contact t
+        ) ct
+            on ct.user_id=u.user_id
+    </select>
+
+
+</mapper>

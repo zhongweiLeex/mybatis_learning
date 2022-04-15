@@ -39,7 +39,7 @@
     <!--id|name|password|address|phone|d_id|did|dept_name|-->
     <!--方式1 ： 使用联合查询：使用级联属性封装结果集   -->
     <resultMap id="MyDifUser1" type="com.lzw.pojo.User">
-        <id column="id" property="id"/>
+        <id column="id" property="id" javaType="Integer" jdbcType="INTEGER"/>
         <result column="name" property="name"/>
         <result column="password" property="password"/>
         <result column="address" property="address"/>
@@ -73,7 +73,7 @@
 
     <!--一个user有与之对应的dept信息-->
     <!--<select id="getUserAndDept" resultMap="MyDifUser1">-->
-    <select id="getUserAndDept" resultMap="MyDifUser2">
+    <select id="getUserAndDept" resultMap="MyDifUser2" databaseId="mysql">
         select u.id,
                u.name,
                u.password,
@@ -87,7 +87,53 @@
         where u.d_id = d.id
           and u.id =#{id}
     </select>
+<!-- =============================== constructor 标签初步使用 ================================================   -->
+    <resultMap id="testUserConstructor" type="com.lzw.pojo.User">
+        <!--constructor 用来映射 User的两个参数的构造方法-->
+        <!--如果不指定这个构造器  默认使用 无参构造器构造-->
+        <constructor>
+            <idArg column="id" javaType="Integer"/>
+            <arg column="name" javaType="String"/>
+        </constructor>
 
+        <result column="password" javaType="String" property="password"/>
+        <result column="address" javaType="String" property="address"/>
+        <association property="dept" javaType="com.lzw.pojo.Dept">
+            <id property="id" javaType="Integer" column="did"/>
+            <result property="name" javaType="String" column="dept_name"/>
+        </association>
+    </resultMap>
+
+    <select id="getUserAndDept2" resultMap="testUserConstructor">
+        select u.id,u.name,u.password,u.address,u.d_id d_id,d.id did,d.dept_name dept_name
+        from jdbc_learn.user u,jdbc_learn.dept d
+        where u.d_id = d.id and u.id = #{id}
+    </select>
+<!-- ===============================  association 标签初步使用 ================================================   -->
+    <resultMap id="Dept_Result_Map" type="com.lzw.pojo.Dept">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <resultMap id="User_Result_Map" type="com.lzw.pojo.User">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <!--相当于 did这条记录是通过嵌套 select查询出来的 嵌套的语句就是  getDept这个语句-->
+        <association property="dept" column="d_id" select="getDeptById" javaType="com.lzw.pojo.Dept"/>
+    </resultMap>
+
+    <select id="getDeptById" resultMap="Dept_Result_Map">
+        select id,dept_name from jdbc_learn.dept where id = #{id}
+    </select>
+
+    <select id="getUserAndDept3" resultMap="User_Result_Map">
+        select id,name,password,address,phone,d_id from jdbc_learn.user where d_id=#{did}
+    </select>
+
+<!-- ===============================  collection 标签初步使用 ================================================   -->
 
 
 </mapper>

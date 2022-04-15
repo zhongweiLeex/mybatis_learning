@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzw.dao.UserBooksMapper">
+    <resultMap id="result_map" type="com.lzw.pojo.UserBean">
+        <constructor>
+            <idArg column="id" javaType="int"/>
+            <arg column="name" javaType="String"/>
+        </constructor>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <collection property="bookList" ofType="com.lzw.pojo.BookBean">
+            <id column="book_id" property="bookId"/>
+            <result column="book_name" property="bookName"/>
+            <result column="price" property="price"/>
+            <result column="content" property="content"/>
+        </collection>
+    </resultMap>
+
+<!--    <select id="findAllBooks" resultMap="result_map">
+        select
+        from jdbc_learn.user u
+        join
+    </select>-->
+</mapper>

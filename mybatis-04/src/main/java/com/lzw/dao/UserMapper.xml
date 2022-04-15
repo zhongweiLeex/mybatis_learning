@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace= "com.lzw.dao.UserMapper">
+<!--===========================结果映射==================================-->
+
+    <resultMap id="result_map" type="com.lzw.pojo.UserBean">
+        <constructor>
+            <idArg column="user_id" javaType="Integer"/>
+            <arg column="name" javaType="String"/>
+        </constructor>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <!--
+            1. property：用来指定需要映射的 JavaBean 的集合属性名，如：bookList
+
+            2. ofType：该属性指定了 property 指定的 JavaBean 属性的 Java 类型，
+                    例如：com.lzw.pojo.BookBean 集合中是哪个类型
+        -->
+        <collection property="bookList" ofType="com.lzw.pojo.BookBean">
+            <id column="book_id" jdbcType="INTEGER" property="bookId"/>
+            <id column="book_name" jdbcType="VARCHAR" property="bookName"/>
+            <id column="price" jdbcType="FLOAT" property="price"/>
+            <id column="content" jdbcType="VARCHAR" property="content"/>
+        </collection>
+    </resultMap>
+
+
+    <resultMap id="result_map1" type="com.lzw.pojo.UserBean">
+        <id column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+    </resultMap>
+
+    <resultMap id="result_map2" type="com.lzw.pojo.UserBean">
+        <constructor>
+            <idArg column="user_id" javaType="Integer"/>
+            <arg column="name" javaType="String"/>
+        </constructor>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+    </resultMap>
+
+<!--===========================SQL片段===================================-->
+    <!-- 定义一个SQL片段 -->
+    <sql id="user_columns" databaseId="mysql" lang="utf-8">
+        `user_id`, `name`, `sex`,`age`
+    </sql>
+
+    <!--SQL片段可以对此嵌套引用-->
+    <sql id="user_base_columns">
+        `user_id`,`name`
+    </sql>
+
+    <sql id="user_columns2">
+        <include refid="user_base_columns"/>,`sex`,`age`
+    </sql>
+    <!-- 查询所有用户信息 -->
+    <!--引用sql片段-->
+    <select id="findAll2" resultMap="result_map">
+        select <include refid="user_columns2" /> from mybatis_test.user
+    </select>
+
+<!--===========================传入参数映射===================================-->
+    <!--设定传入参数的对应的Bean中的类型-->
+    <!--不推荐下面的 形式 ， Mybatis 会自动进行参数映射 -->
+    <parameterMap id="paramMap" type="com.lzw.pojo.UserBean">
+        <parameter property="userId"/>
+    </parameterMap>
+
+    <!-- 设置 select 语句的传入参数映射 将传入参数 映射称为 java中属性名称-->
+    <select id="findOne" resultMap="result_map" parameterMap="paramMap">
+        select <include refid="user_columns2"/> from mybatis_test.user
+        where user_id=#{userId}
+    </select>
+
+
+    <select id="findAll" resultMap="result_map2">
+        select u.user_id, u.name, u.sex, u.age,
+               b.book_id, b.book_name, b.price, b.content
+        from mybatis_test.user u
+        join mybatis_test.user_book ub on u.user_id=ub.user_id
+        join mybatis_test.book b on b.book_id=ub.book_id
+    </select>
+
+<!--===========================resultType查询结果类型===================================-->
+    <!--
+        返回值类型：
+            1. 普通包装类
+            2. hashmap类型
+            3. bean对象
+    -->
+    <select id="getUserCount" resultType="Integer">
+        select count(*) from mybatis_test.user
+    </select>
+
+    <!--
+        如果有两个参数需要注入，此处三种解决办法：
+        1. 在绑定的接口中的参数  @Param("传入参数名")
+        2. 在 select 标签中传入parameterType="com.lzw.pojo.User"
+        3. 在 select 标签中传入 parameterType="map" 绑定接口中的方法的参数也要改编成map
+    -->
+    <select id="getUserById" resultType="hashmap" parameterMap="paramMap">
+        select user_id,name,sex,age
+        from mybatis_test.user
+        where user_id=#{id,jdbcType=INTEGER} and name=#{name,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getUserById2" resultMap="result_map1" parameterType="hashmap">
+        select user_id,name,sex,age
+        from mybatis_test.user
+        where user_id=#{id,jdbcType=INTEGER} and name=#{name,jdbcType=VARCHAR}
+    </select>
+
+
+
+    <insert id="save" parameterType="com.lzw.pojo.UserBean" >
+        insert into mybatis_test.user(user_id,name, sex, age)
+        VALUES (
+                #{userId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{sex,jdbcType=INTEGER},
+                #{age,jdbcType=VARCHAR}
+               )
+    </insert>
+
+
+
+</mapper>

@@ -2,6 +2,8 @@ package com.lzw.pojo;
 
 import org.apache.ibatis.type.Alias;
 
+import java.util.LinkedList;
+
 /**
  * @ClassName User
  * @Description TODO
@@ -19,6 +21,11 @@ public class User {
     private Dept dept;
 
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+
     public Dept getDept() {
         return dept;
     }
@@ -26,11 +33,31 @@ public class User {
     public void setDept(Dept dept) {
         this.dept = dept;
     }
-
+    /** *
+     * 有参构造器2 用于测试 mapper文件中的 resultMap中 constructor标签
+     * @Author zhongweiLee
+     * @Description
+     * @Date 14:46 2022/4/15
+     * @ParamsType [java.lang.Integer, java.lang.String]
+     * @ParamsName [id, name]
+     * @return
+     **/
+    public User(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public User() {
     }
-
+    /* *
+     * 有参构造器
+     * @Author zhongweiLee
+     * @Description
+     * @Date 14:42 2022/4/15
+     * @ParamsType [java.lang.Integer, java.lang.String, java.lang.String, java.lang.String, java.lang.String]
+     * @ParamsName [id, name, password, address, phone]
+     * @return
+     **/
     public User(Integer id, String name, String password, String address, String phone) {
         this.id = id;
         this.name = name;
