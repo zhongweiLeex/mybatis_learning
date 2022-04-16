@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace= "com.lzw.dao.UserMapper">
+    <!--
+        二级缓存设置，
+
+        不同的二级缓存 通过 命名空间区分， 不同的命名空间缓存不互通
+        缓存配置和缓存实例是绑定在 SQL 映射文件的命名空间
+    -->
+    <!--
+        参数：
+            1. eviction: 缓存逐出策略 当二级缓存中的对象数目达到最大值时，就要将逐出策略将缓存中
+                         LRU：   最近最少策略     最近使用的放到顶端 ， 最长时间没有被使用的会被删除
+                         LIFO ： 先进先出策略
+            2. flushInterval: 刷新缓存时间间隔 单位毫秒 ， 如果时增删改操作会立即刷新缓存
+            3. readOnly: 设置缓存中数据只读， 提高效率， 默认false
+            4. size: 设置二级缓存区中存放的对象个数最多是多少
+        二级缓存中存放数据的形式 { result_map : SQL执行语句 }
+    -->
+    <!--
+        二级缓存 可以自定义
+        type：指定自定义缓存接口的所在路径
+
+            <cache type="自定义缓存接口所在未知" >
+                <property name="cacheFile" value="缓存文件所在路径"/>
+            </cache>
+
+
+
+    -->
+    <cache />
+
+
+
+<!--=================================缓存===================================-->
+    <!-- 映射结果 -->
+    <resultMap id="RESULT_MAP" type="com.lzw.pojo.UserBean">
+        <id column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+        <result column="salary" jdbcType="FLOAT" property="salary" />
+    </resultMap>
+    <!--useCache 是否对这条语句执行缓存策略-->
+    <select id="findAll" resultMap="RESULT_MAP" useCache="true">
+        select user_id,name,sex,age,salary from mybatis_test.user
+    </select>
+
+    <select id="findOne" useCache="true" resultType="com.lzw.pojo.UserBean" parameterType="com.lzw.pojo.UserBean">
+        select * from mybatis_test.user where user_id=#{id}
+    </select>
+
+</mapper>

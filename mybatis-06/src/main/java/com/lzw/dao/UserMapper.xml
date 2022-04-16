@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace= "com.lzw.dao.UserMapper">
+
+<!--=================================一对一关系映射 association 标签===================================-->
+<!--==================================一个Contact对象中有一个user对象=================================-->
+
+    <resultMap id="ormContact" type="com.lzw.pojo.ORMContact">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="usage" jdbcType="VARCHAR" property="usage" />
+        <result column="number" jdbcType="VARCHAR" property="number" />
+        <!--关系映射-->
+        <association property="user" column="user_id" javaType="com.lzw.pojo.UserBean">
+            <id column="user_id" jdbcType="INTEGER" property="userId" />
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="sex" jdbcType="VARCHAR" property="sex" />
+            <result column="age" jdbcType="INTEGER" property="age" />
+            <result column="salary" jdbcType="DOUBLE" property="salary" />
+            <result column="birthday" jdbcType="DATE" property="birthday" />
+        </association>
+    </resultMap>
+    <!--连接查询-->
+    <select id="joinSelect" resultMap="ormContact">
+        select user.user_id,user.name,user.sex,user.age,user.salary,user.birthday,
+               contact.id,contact.user_id,contact.`usage`,contact.number
+        from mybatis_test.user user
+        join mybatis_test.user_contact contact
+        on user.user_id=contact.user_id
+    </select>
+<!--=================================一对多关系映射： collection 标签===================================-->
+<!--
+    select: 另一个映射查询的id，MyBatis会额外执行这个查询获取嵌套对象的结果，
+            作为参数传递给上层select
+    fetchType：数据加载方式，可选值为lazy和eager，分别为延迟加载和积极加载。
+    columnPrefix： 当连接多个表时，你可能会不得不使用列别名来避免在 ResultSet 中产生重复的列名。
+                  指定 columnPrefix 列名前缀允许你将带有这些前缀的列映射到一个外部的结果映射中。
+                  详细说明请参考后面的例子。
+    resultSet： 这个设置仅适用于多结果集的情况。
+                它将列出语句执行后返回的结果集并赋予每个结果集一个名称，多个名称之间以逗号分隔。
+-->
+    <resultMap id="ormUser1" type="com.lzw.pojo.ORMUser1">
+        <id column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+        <result column="salary" jdbcType="DOUBLE" property="salary" />
+        <result column="birthday" jdbcType="DATE" property="birthday" />
+        <collection property="contactList" column="user_id" ofType="com.lzw.pojo.ORMContact1">
+            <id column="id" jdbcType="INTEGER" property="id" />
+            <result column="user_id" jdbcType="INTEGER" property="userId" />
+            <result column="usage" jdbcType="VARCHAR" property="usage" />
+            <result column="number" jdbcType="VARCHAR" property="number" />
+        </collection>
+    </resultMap>
+    <select id="joinSelect1" resultMap="ormUser1">
+        select a.`user_id`, a.`name`, a.`sex`, a.`age`, a.`salary`, a.`birthday`,
+               b.`id`, b.`user_id`, b.`usage`, b.`number`
+        from mybatis_test.`user` a
+        join mybatis_test.`user_contact` b on a.`user_id`=b.`user_id`
+    </select>
+
+</mapper>

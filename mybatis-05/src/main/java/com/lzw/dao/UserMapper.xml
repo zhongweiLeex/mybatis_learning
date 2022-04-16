@@ -13,6 +13,8 @@
 
     <!-- 定义 contact 表的映射 -->
     <resultMap id="CONTACT_RESULT_MAP" type="com.lzw.pojo.ContactBean">
+        <!--column      数据库列-->
+        <!--property    javaBean属性-->
         <result column="contact_usage" jdbcType="VARCHAR" property="usage" />
         <result column="contact_number" jdbcType="VARCHAR" property="number" />
     </resultMap>

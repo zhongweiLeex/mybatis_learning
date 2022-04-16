@@ -11,6 +11,7 @@ public class ContactBean extends SubBean{
     private String usage;
     private String number;
 
+
     @Override
     public String toString() {
         return "ContactBean{" +

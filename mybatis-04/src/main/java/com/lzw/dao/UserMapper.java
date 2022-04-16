@@ -30,6 +30,10 @@ public interface UserMapper {
     UserBean getUserById2(HashMap<String,Object> map);
 
     int save(UserBean userBean);
+    /*更新用户信息*/
+    int updateUser(UserBean userBean);
 
+    /*删除用户信息*/
+    int deleteUser(int userId);
 
 }

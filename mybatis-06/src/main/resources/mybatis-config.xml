@@ -47,7 +47,5 @@
 <!--    每个Mapper.xml都需要在Mybatis核心配置文件中注册-->
     <mappers>
         <mapper resource="com/lzw/dao/UserMapper.xml" />
-        <mapper resource="com/lzw/dao/UserMapper2.xml" />
-
     </mappers>
 </configuration>

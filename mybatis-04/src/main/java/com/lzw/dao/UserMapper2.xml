@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace= "com.lzw.dao.UserMapper2">
+
+<!--===========================调用存储过程1： 调用全in参数的存储过程===================================-->
+    <update id="updateUserName" parameterType="com.lzw.pojo.UserBean">
+        {call proc_updateUserName(#{userId},#{userName})}
+    </update>
+<!--===========================调用存储过程2： 调用具有out参数的存储过程===================================-->
+    <!--
+        注意：
+            存储过程类型为 OUT 的参数必须使用 JavaBean / Map 来接收，
+            不能直接使用 Java 基础类型来接收，
+
+    -->
+    <select id="getUserName" parameterType="com.lzw.pojo.ParamBean" statementType="CALLABLE">
+        {
+            call proc_getUserName(
+                #{userId,mode=IN,jdbcType=INTEGER},
+                #{userName,mode=OUT,jdbcType=VARCHAR}
+            )
+        }
+    </select>
+
+    <select id="getUserName2" parameterMap="pm" statementType="CALLABLE" resultType="java.util.Map">
+        {
+            call proc_getUserName(
+                #{userId,mode=IN,jdbcType=INTEGER},
+                #{userName,mode=OUT,jdbcType=VARCHAR}
+            )
+        }
+    </select>
+    <parameterMap id="pm" type="java.util.Map">
+        <parameter property="userId" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="userName" jdbcType="VARCHAR" mode="OUT"/>
+    </parameterMap>
+<!--===========================调用存储过程3： 调用具有INOUT参数的存储过程===================================-->
+
+    <select id="getUserAge" resultType="java.util.Map" parameterType="integer" statementType="CALLABLE">
+        {
+            call proc_getUserAge(
+                #{userId,mode=INOUT,jdbcType=INTEGER}
+            )
+        }
+    </select>
+    <!--    不可以使用普通类型类接 OUT/INOUT参数 需要使用Map/JavaBean形式来接
+        <select id="getUserAge2" resultType="integer" parameterType="integer" statementType="CALLABLE">
+            {
+                call proc_getUserAge(
+                    #{userId,mode=INOUT,jdbcType=INTEGER}
+                )
+            }
+        </select>
+    -->
+
+<!--===========================调用存储过程4： 调用存储函数===================================-->
+
+    <select id="updateUserName2" resultType="INTEGER">
+        select mybatis_test.func_updateUserName(#{userId,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR})
+    </select>
+
+
+
+</mapper>

@@ -101,14 +101,14 @@
         如果有两个参数需要注入，此处三种解决办法：
         1. 在绑定的接口中的参数  @Param("传入参数名")
         2. 在 select 标签中传入parameterType="com.lzw.pojo.User"
-        3. 在 select 标签中传入 parameterType="map" 绑定接口中的方法的参数也要改编成map
+        3. 在 select 标签中传入 parameterType="map" 绑定接口中的方法的参数也要改变成map
     -->
     <select id="getUserById" resultType="hashmap" parameterMap="paramMap">
         select user_id,name,sex,age
         from mybatis_test.user
         where user_id=#{id,jdbcType=INTEGER} and name=#{name,jdbcType=VARCHAR}
     </select>
-
+    <!--通过map传参-->
     <select id="getUserById2" resultMap="result_map1" parameterType="hashmap">
         select user_id,name,sex,age
         from mybatis_test.user
@@ -116,16 +116,49 @@
     </select>
 
 
+    <!--添加user-->
+    <!--
 
-    <insert id="save" parameterType="com.lzw.pojo.UserBean" >
-        insert into mybatis_test.user(user_id,name, sex, age)
+    作用：插入一条数据库，然后返回生成的 数据主键id
+    开启获取主键：         useGeneratedKeys = "true"
+    指明自动生成主键列：    keyProperty= “目标属性（javabean中）”
+
+    -->
+    <!-- 普通插入
+        <insert id="save" parameterType="com.lzw.pojo.UserBean" useGeneratedKeys="true" keyProperty="userId">
+            insert into mybatis_test.user(user_id,name, sex, age)
+            VALUES (
+                    #{userId,jdbcType=VARCHAR},
+                    #{name,jdbcType=VARCHAR},
+                    #{sex,jdbcType=INTEGER},
+                    #{age,jdbcType=VARCHAR}
+                   )
+        </insert>
+    -->
+    <!--获取自增主键值 传递给 javabean对应属性 -->
+    <insert id="save" parameterType="com.lzw.pojo.UserBean" useGeneratedKeys="true" keyProperty="userId" >
+        insert into mybatis_test.user(name, sex, age)
         VALUES (
-                #{userId,jdbcType=VARCHAR},
-                #{name,jdbcType=VARCHAR},
-                #{sex,jdbcType=INTEGER},
-                #{age,jdbcType=VARCHAR}
+                   #{name,jdbcType=VARCHAR},
+                   #{sex,jdbcType=INTEGER},
+                   #{age,jdbcType=VARCHAR}
                )
     </insert>
+
+    <!--利用update更新数据库数据-->
+    <update id="updateUser" parameterType="com.lzw.pojo.UserBean">
+        update mybatis_test.user set
+                                     name=#{name,jdbcType=VARCHAR},
+                                     sex=#{sex,jdbcType=VARCHAR},
+                                     age=#{age,jdbcType=INTEGER}
+        where user_id=#{userId,jdbcType=INTEGER}
+    </update>
+
+    <!--利用delete删除数据库数据-->
+    <delete id="deleteUser" parameterType="int">
+        delete from mybatis_test.user where user_id=#{userId,jdbcType=INTEGER}
+    </delete>
+
 
 
 

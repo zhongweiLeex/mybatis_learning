@@ -22,6 +22,9 @@ public class UserBean {
         this.name = name;
     }
 
+    public UserBean() {
+    }
+
     public Integer getUserId() {
         return userId;
     }

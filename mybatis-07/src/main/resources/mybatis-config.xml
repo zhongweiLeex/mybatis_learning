@@ -11,6 +11,10 @@
     <settings>
         <setting name="jdbcTypeForNull" value="NULL"/>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!--开启输出mybatis日志-->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!--开启全局缓存设置-->
+        <setting name="cacheEnabled" value="true" />
     </settings>
 
 
@@ -47,7 +51,5 @@
 <!--    每个Mapper.xml都需要在Mybatis核心配置文件中注册-->
     <mappers>
         <mapper resource="com/lzw/dao/UserMapper.xml" />
-        <mapper resource="com/lzw/dao/UserMapper2.xml" />
-
     </mappers>
 </configuration>
